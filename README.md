@@ -20,6 +20,19 @@ as an HTTP server.
 
 Parameters and results of every tool are described by JSON Schemas in `schemas/`.
 
+## Examples rendering with Plotly
+
+<img width="1049" height="534" alt="1" src="https://github.com/user-attachments/assets/8e8a31d4-c8e1-4ede-acee-92cdb44f1e19" />
+<img width="1057" height="322" alt="2" src="https://github.com/user-attachments/assets/29c69be4-43ca-42a0-a21b-0161efa214cc" />
+<img width="1057" height="498" alt="3" src="https://github.com/user-attachments/assets/bbce9550-6544-473d-8355-118c5054bdc3" />
+<img width="1054" height="490" alt="4" src="https://github.com/user-attachments/assets/7136c186-e8f9-4b6e-8028-2c3b850dd1ea" />
+<img width="1052" height="658" alt="5" src="https://github.com/user-attachments/assets/becaf5eb-ac0b-421c-9c33-cc58f2850251" />
+<img width="1053" height="536" alt="6" src="https://github.com/user-attachments/assets/70875f5f-2def-4690-9c55-470f3394c927" />
+<img width="1053" height="314" alt="7" src="https://github.com/user-attachments/assets/d3bc0191-72e1-45f4-b0aa-f5a292325c65" />
+<img width="1056" height="493" alt="8" src="https://github.com/user-attachments/assets/3e9880da-8473-4fbd-a51a-9f4143c95656" />
+<img width="1057" height="375" alt="9" src="https://github.com/user-attachments/assets/4ec9eba0-4594-47b5-bcd9-5e7394d53048" />
+
+
 ## Running
 
 Requires [uv](https://docs.astral.sh/uv/).
