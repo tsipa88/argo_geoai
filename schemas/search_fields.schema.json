@@ -1,0 +1,626 @@
+{
+  "$defs": {
+    "Artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "relative to the folder of result.json",
+          "title": "Path",
+          "type": "string"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "description": {
+          "description": "Ukrainian description for people",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "media_type",
+        "description"
+      ],
+      "title": "Artifact",
+      "type": "object"
+    },
+    "DataSource": {
+      "additionalProperties": false,
+      "properties": {
+        "collection": {
+          "title": "Collection",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "resolution_m": {
+          "title": "Resolution M",
+          "type": "number"
+        },
+        "items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "collection",
+        "title",
+        "provider",
+        "resolution_m"
+      ],
+      "title": "DataSource",
+      "type": "object"
+    },
+    "FieldCollection": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "FeatureCollection",
+          "default": "FeatureCollection",
+          "title": "Type",
+          "type": "string"
+        },
+        "features": {
+          "description": "largest overlap first",
+          "items": {
+            "$ref": "#/$defs/FieldFeature"
+          },
+          "title": "Features",
+          "type": "array"
+        }
+      },
+      "required": [
+        "features"
+      ],
+      "title": "FieldCollection",
+      "type": "object"
+    },
+    "FieldFeature": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "Feature",
+          "default": "Feature",
+          "title": "Type",
+          "type": "string"
+        },
+        "id": {
+          "description": "FTW field id",
+          "title": "Id",
+          "type": "string"
+        },
+        "geometry": {
+          "$ref": "#/$defs/FieldGeometry"
+        },
+        "properties": {
+          "$ref": "#/$defs/FieldProperties"
+        }
+      },
+      "required": [
+        "id",
+        "geometry",
+        "properties"
+      ],
+      "title": "FieldFeature",
+      "type": "object"
+    },
+    "FieldGeometry": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "Polygon",
+            "MultiPolygon"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "coordinates": {
+          "description": "GeoJSON coordinates, lng/lat (EPSG:4326)",
+          "items": {},
+          "title": "Coordinates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "type",
+        "coordinates"
+      ],
+      "title": "FieldGeometry",
+      "type": "object"
+    },
+    "FieldProperties": {
+      "additionalProperties": false,
+      "properties": {
+        "area_ha": {
+          "description": "area of the whole field",
+          "title": "Area Ha",
+          "type": "number"
+        },
+        "overlap_ha": {
+          "description": "part of the field inside the polygon",
+          "title": "Overlap Ha",
+          "type": "number"
+        },
+        "overlap_share": {
+          "description": "overlap_ha / area_ha",
+          "title": "Overlap Share",
+          "type": "number"
+        },
+        "relation": {
+          "enum": [
+            "inside",
+            "crosses",
+            "contains",
+            "touches"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "relation_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "FTW model confidence 0-100; null outside the FTW confidence layer (not a low value)",
+          "title": "Confidence"
+        },
+        "year": {
+          "title": "Year",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "area_ha",
+        "overlap_ha",
+        "overlap_share",
+        "relation",
+        "relation_label",
+        "confidence",
+        "year"
+      ],
+      "title": "FieldProperties",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "description": "One human-readable conclusion produced by a fixed rule (never free-form reasoning).",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "info",
+            "notice",
+            "warning"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "text": {
+          "description": "Ukrainian sentence for people",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "level",
+        "text"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "Label": {
+      "additionalProperties": false,
+      "description": "A short value shown to people: the same meaning in English and Ukrainian.",
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "uk": {
+          "title": "Uk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "en",
+        "uk"
+      ],
+      "title": "Label",
+      "type": "object"
+    },
+    "Message": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "text"
+      ],
+      "title": "Message",
+      "type": "object"
+    },
+    "ParcelInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "from the request, or derived from the geometry",
+          "title": "Name",
+          "type": "string"
+        },
+        "parts": {
+          "description": "separate parts of the parcel (MultiPolygon)",
+          "title": "Parts",
+          "type": "integer"
+        },
+        "area_ha": {
+          "description": "area of the polygon",
+          "title": "Area Ha",
+          "type": "number"
+        },
+        "expected_area_ha": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "area the caller expected, from the request",
+          "title": "Expected Area Ha"
+        },
+        "bbox": {
+          "description": "min lng, min lat, max lng, max lat (EPSG:4326)",
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "centroid": {
+          "description": "lng, lat (EPSG:4326)",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Centroid",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "returned from the request as is",
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "parts",
+        "area_ha",
+        "expected_area_ha",
+        "bbox",
+        "centroid"
+      ],
+      "title": "ParcelInfo",
+      "type": "object"
+    },
+    "RunInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "finished_at": {
+          "format": "date-time",
+          "title": "Finished At",
+          "type": "string"
+        },
+        "duration_s": {
+          "title": "Duration S",
+          "type": "number"
+        },
+        "status": {
+          "$ref": "#/$defs/RunStatus"
+        },
+        "status_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "argo_geoai_version": {
+          "title": "Argo Geoai Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "started_at",
+        "finished_at",
+        "duration_s",
+        "status",
+        "status_label",
+        "argo_geoai_version"
+      ],
+      "title": "RunInfo",
+      "type": "object"
+    },
+    "RunStatus": {
+      "enum": [
+        "ok",
+        "partial",
+        "error"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    },
+    "SearchFieldsMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "year": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "year of the field map used; null when no data",
+          "title": "Year"
+        },
+        "years_available": {
+          "description": "years of the field map around the polygon",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Years Available",
+          "type": "array"
+        },
+        "fields_found": {
+          "title": "Fields Found",
+          "type": "integer"
+        },
+        "counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "description": "fields per relation",
+          "title": "Counts",
+          "type": "object"
+        },
+        "fields_area_ha": {
+          "description": "sum of the whole areas of the found fields",
+          "title": "Fields Area Ha",
+          "type": "number"
+        },
+        "covered_share": {
+          "description": "share of the polygon under the found fields",
+          "title": "Covered Share",
+          "type": "number"
+        },
+        "low_confidence": {
+          "description": "fields with a confidence below 69",
+          "title": "Low Confidence",
+          "type": "integer"
+        },
+        "small_skipped": {
+          "default": 0,
+          "description": "polygons that met the parcel but were smaller than min_area_ha",
+          "title": "Small Skipped",
+          "type": "integer"
+        },
+        "fields": {
+          "$ref": "#/$defs/FieldCollection"
+        }
+      },
+      "required": [
+        "year",
+        "years_available",
+        "fields_found",
+        "counts",
+        "fields_area_ha",
+        "covered_share",
+        "low_confidence",
+        "fields"
+      ],
+      "title": "SearchFieldsMetrics",
+      "type": "object"
+    },
+    "SearchFieldsParams": {
+      "additionalProperties": false,
+      "properties": {
+        "year": {
+          "anyOf": [
+            {
+              "minimum": 2024,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "year of the field map; the latest one in the data by default",
+          "title": "Year"
+        },
+        "min_confidence": {
+          "default": 0,
+          "description": "skip fields with a lower FTW model confidence (0-100; 69 is the FTW reliability filter); fields without a confidence value (outside the FTW confidence layer) are kept",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Min Confidence",
+          "type": "number"
+        },
+        "straighten_m": {
+          "default": 7.0,
+          "description": "straighten the staircase edges of the returned outlines: the outline goes through the middles of the 10 m steps and drops points closer than this to a straight line, m; 0: the source outline. Areas, overlaps and relations are always of the source outline",
+          "maximum": 20,
+          "minimum": 0,
+          "title": "Straighten M",
+          "type": "number"
+        },
+        "min_area_ha": {
+          "default": 1.0,
+          "description": "skip fields smaller than this (by the source outline), ha; 0: keep every polygon",
+          "minimum": 0,
+          "title": "Min Area Ha",
+          "type": "number"
+        }
+      },
+      "title": "SearchFieldsParams",
+      "type": "object"
+    },
+    "ToolInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/Label"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "title"
+      ],
+      "title": "ToolInfo",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "3.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tool": {
+      "$ref": "#/$defs/ToolInfo"
+    },
+    "run": {
+      "$ref": "#/$defs/RunInfo"
+    },
+    "parcel": {
+      "$ref": "#/$defs/ParcelInfo"
+    },
+    "parameters": {
+      "$ref": "#/$defs/SearchFieldsParams"
+    },
+    "data_sources": {
+      "items": {
+        "$ref": "#/$defs/DataSource"
+      },
+      "title": "Data Sources",
+      "type": "array"
+    },
+    "summary": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Summary",
+      "type": "array"
+    },
+    "metrics": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SearchFieldsMetrics"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "tool",
+    "run",
+    "parcel",
+    "parameters"
+  ],
+  "title": "ToolResult[SearchFieldsMetrics, SearchFieldsParams]",
+  "type": "object"
+}

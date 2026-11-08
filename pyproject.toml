@@ -1,0 +1,117 @@
+[project]
+name = "argo-geoai"
+version = "0.1.0"
+description = "Satellite-based analysis tools for land parcels (GeoAI + Microsoft Planetary Computer)"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "geoai-py==0.43.1",
+    "torch==2.14.1",
+    "torchvision==0.29.1",
+    "geopandas>=1.2",
+    "matplotlib>=3.11",
+    "numpy>=2.5",
+    "planetary-computer>=1.0",
+    "pydantic>=2.11",
+    "pydantic-settings>=2.10",
+    "pystac>=1.13",
+    "rasterio>=1.5",
+    "rioxarray>=0.23",
+    "scipy>=1.18",
+    "shapely>=2.1",
+    "typer>=0.19",
+    "xarray>=2025.9",
+    "scikit-learn>=1.7",
+    "plotly>=6",
+    "fastapi>=0.142",
+    "uvicorn>=0.54",
+]
+
+[project.scripts]
+argo-geoai = "argo_geoai.cli:app"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18",
+    "pandas-stubs",
+    "pytest>=8.4",
+    "ruff>=0.13",
+    "scipy-stubs",
+    "types-shapely",
+]
+
+[build-system]
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv]
+environments = ["sys_platform == 'darwin'", "sys_platform == 'linux'"]
+
+[tool.uv.sources]
+# the server has no GPU: take CPU-only torch builds on Linux instead of the multi-GB CUDA ones
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+torchvision = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "UP", "B", "C4", "SIM", "RUF", "PTH", "DTZ", "PL", "PT", "RET", "TC", "ANN"]
+ignore = [
+    "PLR0913",  # tools take many keyword parameters by design
+    "PLR2004",  # thresholds live next to the rules that use them
+    "RUF001",   # Ukrainian text legitimately contains Cyrillic letters that look like Latin ones
+    "RUF002",
+    "RUF003",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN", "PLR2004"]
+"src/argo_geoai/cli.py" = ["PLR0917"]  # Typer reads options from the function signature
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+mypy_path = "src"
+files = ["src", "tests", "scripts"]
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "geoai.*", "geopandas.*", "rasterio.*", "rioxarray.*", "pystac.*", "pystac_client.*",
+    "planetary_computer.*", "matplotlib.*", "sklearn.*", "plotly.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "-m", "not network"]
+markers = [
+    "network: downloads data from Microsoft Planetary Computer (slow)",
+]
+filterwarnings = [
+    # known, harmless warnings of the geospatial stack (same list as in the CLI)
+    "ignore:File object not available, clipping in-memory",
+    "ignore:invalid value encountered in cast:RuntimeWarning",
+    "ignore::FutureWarning:pystac_client.*",
+    "ignore::DeprecationWarning:pystac_client.*",
+    "ignore::PendingDeprecationWarning:rioxarray.*",
+    # planetary-computer still uses Pydantic v1-style config: works now, breaks with Pydantic 3 (see README)
+    "ignore::pydantic.warnings.PydanticDeprecatedSince20:planetary_computer.*",
+]

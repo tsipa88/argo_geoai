@@ -1,0 +1,835 @@
+{
+  "$defs": {
+    "Artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "relative to the folder of result.json",
+          "title": "Path",
+          "type": "string"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "description": {
+          "description": "Ukrainian description for people",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "media_type",
+        "description"
+      ],
+      "title": "Artifact",
+      "type": "object"
+    },
+    "DataSource": {
+      "additionalProperties": false,
+      "properties": {
+        "collection": {
+          "title": "Collection",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "resolution_m": {
+          "title": "Resolution M",
+          "type": "number"
+        },
+        "items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "collection",
+        "title",
+        "provider",
+        "resolution_m"
+      ],
+      "title": "DataSource",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "description": "One human-readable conclusion produced by a fixed rule (never free-form reasoning).",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "info",
+            "notice",
+            "warning"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "text": {
+          "description": "Ukrainian sentence for people",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "level",
+        "text"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "Gap": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "format": "date",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "format": "date",
+          "title": "End",
+          "type": "string"
+        },
+        "days": {
+          "title": "Days",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "days"
+      ],
+      "title": "Gap",
+      "type": "object"
+    },
+    "Label": {
+      "additionalProperties": false,
+      "description": "A short value shown to people: the same meaning in English and Ukrainian.",
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "uk": {
+          "title": "Uk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "en",
+        "uk"
+      ],
+      "title": "Label",
+      "type": "object"
+    },
+    "LandCoverShare": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label"
+        },
+        "share": {
+          "title": "Share",
+          "type": "number"
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "share"
+      ],
+      "title": "LandCoverShare",
+      "type": "object"
+    },
+    "Message": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "text"
+      ],
+      "title": "Message",
+      "type": "object"
+    },
+    "NdviDate": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "scene_id": {
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "scene_cloud_cover": {
+          "title": "Scene Cloud Cover",
+          "type": "number"
+        },
+        "clear_share": {
+          "title": "Clear Share",
+          "type": "number"
+        },
+        "parcel_area_ha": {
+          "title": "Parcel Area Ha",
+          "type": "number"
+        },
+        "counted": {
+          "description": "clear enough to count in the season",
+          "title": "Counted",
+          "type": "boolean"
+        },
+        "ndvi": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NdviStats"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "date",
+        "scene_id",
+        "scene_cloud_cover",
+        "clear_share",
+        "parcel_area_ha",
+        "counted",
+        "ndvi"
+      ],
+      "title": "NdviDate",
+      "type": "object"
+    },
+    "NdviStats": {
+      "additionalProperties": false,
+      "properties": {
+        "mean": {
+          "title": "Mean",
+          "type": "number"
+        },
+        "median": {
+          "title": "Median",
+          "type": "number"
+        },
+        "p10": {
+          "title": "P10",
+          "type": "number"
+        },
+        "p90": {
+          "title": "P90",
+          "type": "number"
+        },
+        "spread": {
+          "description": "p90 - p10: how uneven the parcel is",
+          "title": "Spread",
+          "type": "number"
+        }
+      },
+      "required": [
+        "mean",
+        "median",
+        "p10",
+        "p90",
+        "spread"
+      ],
+      "title": "NdviStats",
+      "type": "object"
+    },
+    "ParcelInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "from the request, or derived from the geometry",
+          "title": "Name",
+          "type": "string"
+        },
+        "parts": {
+          "description": "separate parts of the parcel (MultiPolygon)",
+          "title": "Parts",
+          "type": "integer"
+        },
+        "area_ha": {
+          "description": "area of the polygon",
+          "title": "Area Ha",
+          "type": "number"
+        },
+        "expected_area_ha": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "area the caller expected, from the request",
+          "title": "Expected Area Ha"
+        },
+        "bbox": {
+          "description": "min lng, min lat, max lng, max lat (EPSG:4326)",
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "centroid": {
+          "description": "lng, lat (EPSG:4326)",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Centroid",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "returned from the request as is",
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "parts",
+        "area_ha",
+        "expected_area_ha",
+        "bbox",
+        "centroid"
+      ],
+      "title": "ParcelInfo",
+      "type": "object"
+    },
+    "RunInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "finished_at": {
+          "format": "date-time",
+          "title": "Finished At",
+          "type": "string"
+        },
+        "duration_s": {
+          "title": "Duration S",
+          "type": "number"
+        },
+        "status": {
+          "$ref": "#/$defs/RunStatus"
+        },
+        "status_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "argo_geoai_version": {
+          "title": "Argo Geoai Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "started_at",
+        "finished_at",
+        "duration_s",
+        "status",
+        "status_label",
+        "argo_geoai_version"
+      ],
+      "title": "RunInfo",
+      "type": "object"
+    },
+    "RunStatus": {
+      "enum": [
+        "ok",
+        "partial",
+        "error"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    },
+    "SeasonPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "ndvi": {
+          "$ref": "#/$defs/NdviStats"
+        }
+      },
+      "required": [
+        "date",
+        "ndvi"
+      ],
+      "title": "SeasonPoint",
+      "type": "object"
+    },
+    "ToolInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/Label"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "title"
+      ],
+      "title": "ToolInfo",
+      "type": "object"
+    },
+    "VegetationMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "period_start": {
+          "format": "date",
+          "title": "Period Start",
+          "type": "string"
+        },
+        "period_end": {
+          "format": "date",
+          "title": "Period End",
+          "type": "string"
+        },
+        "scenes_found": {
+          "title": "Scenes Found",
+          "type": "integer"
+        },
+        "dates_total": {
+          "title": "Dates Total",
+          "type": "integer"
+        },
+        "dates_counted": {
+          "title": "Dates Counted",
+          "type": "integer"
+        },
+        "peak": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SeasonPoint"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "max_spread": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SeasonPoint"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "latest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SeasonPoint"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "change_peak_to_latest": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Change Peak To Latest"
+        },
+        "longest_gap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Gap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "history": {
+          "items": {
+            "$ref": "#/$defs/NdviDate"
+          },
+          "title": "History",
+          "type": "array"
+        },
+        "land_cover": {
+          "items": {
+            "$ref": "#/$defs/LandCoverShare"
+          },
+          "title": "Land Cover",
+          "type": "array"
+        },
+        "zones": {
+          "description": "parts of the parcel with different NDVI curves; one zone means a uniform field",
+          "items": {
+            "$ref": "#/$defs/Zone"
+          },
+          "title": "Zones",
+          "type": "array"
+        },
+        "zoning_silhouette": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "how clear-cut the split into zones is, 0..1",
+          "title": "Zoning Silhouette"
+        }
+      },
+      "required": [
+        "period_start",
+        "period_end",
+        "scenes_found",
+        "dates_total",
+        "dates_counted",
+        "peak",
+        "max_spread",
+        "latest",
+        "change_peak_to_latest",
+        "longest_gap",
+        "history",
+        "land_cover"
+      ],
+      "title": "VegetationMetrics",
+      "type": "object"
+    },
+    "VegetationParams": {
+      "additionalProperties": false,
+      "properties": {
+        "months": {
+          "default": 6,
+          "description": "period length, counted back from end_date",
+          "maximum": 36,
+          "minimum": 1,
+          "title": "Months",
+          "type": "integer"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "last day of the period; today by default",
+          "title": "End Date"
+        },
+        "max_scene_cloud": {
+          "default": 20,
+          "description": "skip scenes cloudier than this, %",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Max Scene Cloud",
+          "type": "number"
+        },
+        "min_clear_share": {
+          "default": 0.8,
+          "description": "a date counts in the season only if this share of the parcel is cloud-free",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Clear Share",
+          "type": "number"
+        }
+      },
+      "title": "VegetationParams",
+      "type": "object"
+    },
+    "Zone": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "1 is the largest zone",
+          "title": "Id",
+          "type": "integer"
+        },
+        "share": {
+          "title": "Share",
+          "type": "number"
+        },
+        "area_ha": {
+          "title": "Area Ha",
+          "type": "number"
+        },
+        "timing": {
+          "description": "early: peak by the end of May; late: bare start, peak from mid-June; other: the rest",
+          "enum": [
+            "early",
+            "late",
+            "other"
+          ],
+          "title": "Timing",
+          "type": "string"
+        },
+        "timing_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "development": {
+          "description": "strength of the zone peak",
+          "enum": [
+            "strong",
+            "moderate",
+            "weak"
+          ],
+          "title": "Development",
+          "type": "string"
+        },
+        "development_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "role": {
+          "description": "relation to zone 1: another crop (different curve) or the same crop, weaker or stronger",
+          "enum": [
+            "main",
+            "separate_crop",
+            "weaker_area",
+            "stronger_area"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "role_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "correlation_with_main": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Pearson correlation of the NDVI curve with zone 1",
+          "title": "Correlation With Main"
+        },
+        "patches": {
+          "description": "separate patches on the map (from 0.5 ha)",
+          "title": "Patches",
+          "type": "integer"
+        },
+        "largest_patch_share": {
+          "title": "Largest Patch Share",
+          "type": "number"
+        },
+        "first": {
+          "$ref": "#/$defs/ZonePoint"
+        },
+        "peak": {
+          "$ref": "#/$defs/ZonePoint"
+        },
+        "latest": {
+          "$ref": "#/$defs/ZonePoint"
+        },
+        "curve": {
+          "items": {
+            "$ref": "#/$defs/ZonePoint"
+          },
+          "title": "Curve",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "share",
+        "area_ha",
+        "timing",
+        "timing_label",
+        "development",
+        "development_label",
+        "role",
+        "role_label",
+        "correlation_with_main",
+        "patches",
+        "largest_patch_share",
+        "first",
+        "peak",
+        "latest",
+        "curve"
+      ],
+      "title": "Zone",
+      "type": "object"
+    },
+    "ZonePoint": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "ndvi": {
+          "title": "Ndvi",
+          "type": "number"
+        }
+      },
+      "required": [
+        "date",
+        "ndvi"
+      ],
+      "title": "ZonePoint",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "3.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tool": {
+      "$ref": "#/$defs/ToolInfo"
+    },
+    "run": {
+      "$ref": "#/$defs/RunInfo"
+    },
+    "parcel": {
+      "$ref": "#/$defs/ParcelInfo"
+    },
+    "parameters": {
+      "$ref": "#/$defs/VegetationParams"
+    },
+    "data_sources": {
+      "items": {
+        "$ref": "#/$defs/DataSource"
+      },
+      "title": "Data Sources",
+      "type": "array"
+    },
+    "summary": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Summary",
+      "type": "array"
+    },
+    "metrics": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VegetationMetrics"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "tool",
+    "run",
+    "parcel",
+    "parameters"
+  ],
+  "title": "ToolResult[VegetationMetrics, VegetationParams]",
+  "type": "object"
+}

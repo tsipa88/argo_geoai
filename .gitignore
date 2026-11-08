@@ -1,0 +1,33 @@
+# environment and secrets
+.venv/
+.env
+.env.*
+!.env.example
+
+# runs of the service and downloaded data (the search_fields map alone is ~2 GB)
+output/
+results/
+cache/
+tmp/
+*.log
+
+# build and tool caches
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.pyc
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# editors and OS
+.idea/
+.vscode/
+.claude/settings.local.json
+.DS_Store
+
+# local notes
+docs/

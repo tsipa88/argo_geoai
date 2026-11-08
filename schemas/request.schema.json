@@ -1,0 +1,81 @@
+{
+  "$defs": {
+    "ParcelProperties": {
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "folder name for the results",
+          "title": "Name"
+        },
+        "area_ha": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "area the caller expects; a mismatch is warned about",
+          "title": "Area Ha"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "returned in result.json as is",
+          "title": "Metadata",
+          "type": "object"
+        },
+        "highlight": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GeoJSON Polygon or MultiPolygon (lng/lat) drawn as a thin outline on the maps, e.g. the field inside a larger analysed area; it does not change the analysis",
+          "title": "Highlight"
+        }
+      },
+      "title": "ParcelProperties",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "type": {
+      "const": "Feature",
+      "default": "Feature",
+      "title": "Type",
+      "type": "string"
+    },
+    "geometry": {
+      "additionalProperties": true,
+      "description": "GeoJSON Polygon or MultiPolygon, lng/lat (EPSG:4326)",
+      "title": "Geometry",
+      "type": "object"
+    },
+    "properties": {
+      "$ref": "#/$defs/ParcelProperties"
+    }
+  },
+  "required": [
+    "geometry"
+  ],
+  "title": "ParcelRequest",
+  "type": "object"
+}

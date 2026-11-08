@@ -1,0 +1,1137 @@
+{
+  "$defs": {
+    "Artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "relative to the folder of result.json",
+          "title": "Path",
+          "type": "string"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "description": {
+          "description": "Ukrainian description for people",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "media_type",
+        "description"
+      ],
+      "title": "Artifact",
+      "type": "object"
+    },
+    "BoundarySide": {
+      "additionalProperties": false,
+      "properties": {
+        "index": {
+          "title": "Index",
+          "type": "integer"
+        },
+        "letters": {
+          "description": "e.g. А–Б, as on a cadastral plan (in the order of the polygon)",
+          "title": "Letters",
+          "type": "string"
+        },
+        "name": {
+          "description": "Ukrainian: західна межа (А–Б)",
+          "title": "Name",
+          "type": "string"
+        },
+        "name_locative": {
+          "description": "Ukrainian, locative: західній межі (А–Б)",
+          "title": "Name Locative",
+          "type": "string"
+        },
+        "direction": {
+          "description": "Ukrainian direction the side faces",
+          "title": "Direction",
+          "type": "string"
+        },
+        "length_m": {
+          "title": "Length M",
+          "type": "number"
+        },
+        "start": {
+          "description": "lng, lat",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Start",
+          "type": "array"
+        },
+        "end": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "End",
+          "type": "array"
+        },
+        "bbox": {
+          "description": "lng/lat frame for a picture of the side",
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "events": {
+          "description": "numbers of the events whose object lies on this side",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Events",
+          "type": "array"
+        },
+        "text": {
+          "description": "Ukrainian: what happened on this side",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "letters",
+        "name",
+        "name_locative",
+        "direction",
+        "length_m",
+        "start",
+        "end",
+        "bbox",
+        "events",
+        "text"
+      ],
+      "title": "BoundarySide",
+      "type": "object"
+    },
+    "ChangeEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "number": {
+          "title": "Number",
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "appeared",
+            "removed",
+            "changed"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "kind_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "color": {
+          "title": "Color",
+          "type": "string"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "last clear image before the change",
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "first clear image that shows the change",
+          "title": "Date To"
+        },
+        "year_from": {
+          "title": "Year From",
+          "type": "integer"
+        },
+        "year_to": {
+          "title": "Year To",
+          "type": "integer"
+        },
+        "area_m2": {
+          "description": "whole object, inside and outside the parcel",
+          "title": "Area M2",
+          "type": "number"
+        },
+        "inside_m2": {
+          "title": "Inside M2",
+          "type": "number"
+        },
+        "inside_share": {
+          "description": "part of the object inside the parcel",
+          "title": "Inside Share",
+          "type": "number"
+        },
+        "parcel_share": {
+          "description": "part of the parcel the inside part takes",
+          "title": "Parcel Share",
+          "type": "number"
+        },
+        "location": {
+          "description": "Ukrainian: where in the parcel (or on which side of it)",
+          "title": "Location",
+          "type": "string"
+        },
+        "on_boundary": {
+          "title": "On Boundary",
+          "type": "boolean"
+        },
+        "side": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "index in metrics.boundary of the side the object lies on",
+          "title": "Side"
+        },
+        "brightness_before": {
+          "title": "Brightness Before",
+          "type": "number"
+        },
+        "brightness_after": {
+          "title": "Brightness After",
+          "type": "number"
+        },
+        "surface_before": {
+          "title": "Surface Before",
+          "type": "string"
+        },
+        "surface_after": {
+          "title": "Surface After",
+          "type": "string"
+        },
+        "radar_change_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Radar Change Db"
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "title": "Confidence",
+          "type": "string"
+        },
+        "confidence_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "text": {
+          "description": "Ukrainian description for the report",
+          "title": "Text",
+          "type": "string"
+        },
+        "geometry": {
+          "additionalProperties": true,
+          "description": "GeoJSON Polygon/MultiPolygon of the object cells, lng/lat",
+          "title": "Geometry",
+          "type": "object"
+        }
+      },
+      "required": [
+        "number",
+        "kind",
+        "kind_label",
+        "color",
+        "date_from",
+        "date_to",
+        "year_from",
+        "year_to",
+        "area_m2",
+        "inside_m2",
+        "inside_share",
+        "parcel_share",
+        "location",
+        "on_boundary",
+        "side",
+        "brightness_before",
+        "brightness_after",
+        "surface_before",
+        "surface_after",
+        "radar_change_db",
+        "confidence",
+        "confidence_label",
+        "text",
+        "geometry"
+      ],
+      "title": "ChangeEvent",
+      "type": "object"
+    },
+    "CoverShare": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label"
+        },
+        "share": {
+          "title": "Share",
+          "type": "number"
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "share"
+      ],
+      "title": "CoverShare",
+      "type": "object"
+    },
+    "DataSource": {
+      "additionalProperties": false,
+      "properties": {
+        "collection": {
+          "title": "Collection",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "resolution_m": {
+          "title": "Resolution M",
+          "type": "number"
+        },
+        "items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "collection",
+        "title",
+        "provider",
+        "resolution_m"
+      ],
+      "title": "DataSource",
+      "type": "object"
+    },
+    "Elevation": {
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "title": "Min",
+          "type": "number"
+        },
+        "max": {
+          "title": "Max",
+          "type": "number"
+        },
+        "mean": {
+          "title": "Mean",
+          "type": "number"
+        },
+        "range": {
+          "title": "Range",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min",
+        "max",
+        "mean",
+        "range"
+      ],
+      "title": "Elevation",
+      "type": "object"
+    },
+    "FieldDetailsMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "land_cover": {
+          "items": {
+            "$ref": "#/$defs/CoverShare"
+          },
+          "title": "Land Cover",
+          "type": "array"
+        },
+        "relief": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Relief"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observations": {
+          "$ref": "#/$defs/Observations"
+        },
+        "years": {
+          "items": {
+            "$ref": "#/$defs/YearComposite"
+          },
+          "title": "Years",
+          "type": "array"
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/ChangeEvent"
+          },
+          "title": "Events",
+          "type": "array"
+        },
+        "boundary": {
+          "items": {
+            "$ref": "#/$defs/BoundarySide"
+          },
+          "title": "Boundary",
+          "type": "array"
+        },
+        "encroachment_events": {
+          "description": "numbers of the events whose object lies on the boundary",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Encroachment Events",
+          "type": "array"
+        },
+        "snapshots": {
+          "items": {
+            "$ref": "#/$defs/Snapshot"
+          },
+          "title": "Snapshots",
+          "type": "array"
+        },
+        "images": {
+          "items": {
+            "$ref": "#/$defs/ImageOut"
+          },
+          "title": "Images",
+          "type": "array"
+        }
+      },
+      "required": [
+        "land_cover",
+        "relief",
+        "observations",
+        "years",
+        "events",
+        "boundary",
+        "encroachment_events",
+        "snapshots",
+        "images"
+      ],
+      "title": "FieldDetailsMetrics",
+      "type": "object"
+    },
+    "FieldDetailsParams": {
+      "additionalProperties": false,
+      "properties": {
+        "start_year": {
+          "default": 2017,
+          "description": "first year of the history (Sentinel-2)",
+          "maximum": 2100,
+          "minimum": 2015,
+          "title": "Start Year",
+          "type": "integer"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "last day of the history; today by default",
+          "title": "End Date"
+        },
+        "max_scene_cloud": {
+          "default": 40,
+          "description": "skip scenes cloudier than this, %",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Max Scene Cloud",
+          "type": "number"
+        },
+        "min_clear_share": {
+          "default": 0.9,
+          "description": "a date counts when at least this share of the analysed area is clear",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Clear Share",
+          "type": "number"
+        },
+        "max_scenes": {
+          "default": 300,
+          "description": "at most this many scenes are read, thinned evenly over the period",
+          "maximum": 3000,
+          "minimum": 20,
+          "title": "Max Scenes",
+          "type": "integer"
+        },
+        "surroundings_m": {
+          "default": 60,
+          "description": "ground around the parcel analysed too: objects on the boundary",
+          "maximum": 500,
+          "minimum": 20,
+          "title": "Surroundings M",
+          "type": "number"
+        },
+        "change_threshold": {
+          "default": 0.08,
+          "description": "a cell changed when its spectrum moved this far from the baseline (reflectance units)",
+          "maximum": 0.5,
+          "minimum": 0.02,
+          "title": "Change Threshold",
+          "type": "number"
+        },
+        "min_object_m2": {
+          "default": 300,
+          "description": "smaller groups of changed cells are noise",
+          "maximum": 10000,
+          "minimum": 100,
+          "title": "Min Object M2",
+          "type": "number"
+        },
+        "radar": {
+          "default": true,
+          "description": "read Sentinel-1 radar to confirm structures; False: optical only",
+          "title": "Radar",
+          "type": "boolean"
+        },
+        "snapshots_per_year": {
+          "default": 3,
+          "description": "true-colour images per year, spread over it",
+          "maximum": 12,
+          "minimum": 1,
+          "title": "Snapshots Per Year",
+          "type": "integer"
+        },
+        "snapshot_buffer_m": {
+          "default": 150,
+          "description": "ground around the parcel on a snapshot, m",
+          "maximum": 2000,
+          "minimum": 0,
+          "title": "Snapshot Buffer M",
+          "type": "number"
+        },
+        "relief_buffer_m": {
+          "default": 400,
+          "description": "relief read around the parcel, m",
+          "maximum": 3000,
+          "minimum": 100,
+          "title": "Relief Buffer M",
+          "type": "number"
+        }
+      },
+      "title": "FieldDetailsParams",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "description": "One human-readable conclusion produced by a fixed rule (never free-form reasoning).",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "info",
+            "notice",
+            "warning"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "text": {
+          "description": "Ukrainian sentence for people",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "level",
+        "text"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "ImageOut": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "png_base64": {
+          "title": "Png Base64",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "title",
+        "description",
+        "png_base64"
+      ],
+      "title": "ImageOut",
+      "type": "object"
+    },
+    "Label": {
+      "additionalProperties": false,
+      "description": "A short value shown to people: the same meaning in English and Ukrainian.",
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "uk": {
+          "title": "Uk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "en",
+        "uk"
+      ],
+      "title": "Label",
+      "type": "object"
+    },
+    "Message": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "text"
+      ],
+      "title": "Message",
+      "type": "object"
+    },
+    "Observations": {
+      "additionalProperties": false,
+      "properties": {
+        "scenes_found": {
+          "title": "Scenes Found",
+          "type": "integer"
+        },
+        "scenes_read": {
+          "title": "Scenes Read",
+          "type": "integer"
+        },
+        "dates_counted": {
+          "title": "Dates Counted",
+          "type": "integer"
+        },
+        "radar_acquisitions": {
+          "title": "Radar Acquisitions",
+          "type": "integer"
+        },
+        "first_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "First Date"
+        },
+        "last_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Date"
+        }
+      },
+      "required": [
+        "scenes_found",
+        "scenes_read",
+        "dates_counted",
+        "radar_acquisitions",
+        "first_date",
+        "last_date"
+      ],
+      "title": "Observations",
+      "type": "object"
+    },
+    "ParcelInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "from the request, or derived from the geometry",
+          "title": "Name",
+          "type": "string"
+        },
+        "parts": {
+          "description": "separate parts of the parcel (MultiPolygon)",
+          "title": "Parts",
+          "type": "integer"
+        },
+        "area_ha": {
+          "description": "area of the polygon",
+          "title": "Area Ha",
+          "type": "number"
+        },
+        "expected_area_ha": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "area the caller expected, from the request",
+          "title": "Expected Area Ha"
+        },
+        "bbox": {
+          "description": "min lng, min lat, max lng, max lat (EPSG:4326)",
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "centroid": {
+          "description": "lng, lat (EPSG:4326)",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Centroid",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "returned from the request as is",
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "parts",
+        "area_ha",
+        "expected_area_ha",
+        "bbox",
+        "centroid"
+      ],
+      "title": "ParcelInfo",
+      "type": "object"
+    },
+    "Relief": {
+      "additionalProperties": false,
+      "properties": {
+        "elevation_m": {
+          "$ref": "#/$defs/Elevation",
+          "description": "inside the parcel"
+        },
+        "around_elevation_m": {
+          "$ref": "#/$defs/Elevation",
+          "description": "in the window of relief_buffer_m around it"
+        },
+        "slope_deg": {
+          "$ref": "#/$defs/Slope"
+        },
+        "flat": {
+          "title": "Flat",
+          "type": "boolean"
+        },
+        "low_side": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Ukrainian name of the direction of the lower part, if any",
+          "title": "Low Side"
+        }
+      },
+      "required": [
+        "elevation_m",
+        "around_elevation_m",
+        "slope_deg",
+        "flat",
+        "low_side"
+      ],
+      "title": "Relief",
+      "type": "object"
+    },
+    "RunInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "finished_at": {
+          "format": "date-time",
+          "title": "Finished At",
+          "type": "string"
+        },
+        "duration_s": {
+          "title": "Duration S",
+          "type": "number"
+        },
+        "status": {
+          "$ref": "#/$defs/RunStatus"
+        },
+        "status_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "argo_geoai_version": {
+          "title": "Argo Geoai Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "started_at",
+        "finished_at",
+        "duration_s",
+        "status",
+        "status_label",
+        "argo_geoai_version"
+      ],
+      "title": "RunInfo",
+      "type": "object"
+    },
+    "RunStatus": {
+      "enum": [
+        "ok",
+        "partial",
+        "error"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    },
+    "Slope": {
+      "additionalProperties": false,
+      "properties": {
+        "mean": {
+          "title": "Mean",
+          "type": "number"
+        },
+        "p90": {
+          "title": "P90",
+          "type": "number"
+        },
+        "max": {
+          "title": "Max",
+          "type": "number"
+        }
+      },
+      "required": [
+        "mean",
+        "p90",
+        "max"
+      ],
+      "title": "Slope",
+      "type": "object"
+    },
+    "Snapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "scene_id": {
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "clear_share": {
+          "title": "Clear Share",
+          "type": "number"
+        },
+        "png_base64": {
+          "title": "Png Base64",
+          "type": "string"
+        }
+      },
+      "required": [
+        "date",
+        "scene_id",
+        "clear_share",
+        "png_base64"
+      ],
+      "title": "Snapshot",
+      "type": "object"
+    },
+    "ToolInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/Label"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "title"
+      ],
+      "title": "ToolInfo",
+      "type": "object"
+    },
+    "YearComposite": {
+      "additionalProperties": false,
+      "properties": {
+        "year": {
+          "title": "Year",
+          "type": "integer"
+        },
+        "dates": {
+          "description": "clear dates in the composite",
+          "title": "Dates",
+          "type": "integer"
+        },
+        "first_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "First Date"
+        },
+        "last_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Date"
+        },
+        "png_base64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "true-colour median of the year, the parcel outlined",
+          "title": "Png Base64"
+        }
+      },
+      "required": [
+        "year",
+        "dates",
+        "first_date",
+        "last_date",
+        "png_base64"
+      ],
+      "title": "YearComposite",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "3.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tool": {
+      "$ref": "#/$defs/ToolInfo"
+    },
+    "run": {
+      "$ref": "#/$defs/RunInfo"
+    },
+    "parcel": {
+      "$ref": "#/$defs/ParcelInfo"
+    },
+    "parameters": {
+      "$ref": "#/$defs/FieldDetailsParams"
+    },
+    "data_sources": {
+      "items": {
+        "$ref": "#/$defs/DataSource"
+      },
+      "title": "Data Sources",
+      "type": "array"
+    },
+    "summary": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Summary",
+      "type": "array"
+    },
+    "metrics": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FieldDetailsMetrics"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "tool",
+    "run",
+    "parcel",
+    "parameters"
+  ],
+  "title": "ToolResult[FieldDetailsMetrics, FieldDetailsParams]",
+  "type": "object"
+}

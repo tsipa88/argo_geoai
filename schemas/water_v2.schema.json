@@ -1,0 +1,699 @@
+{
+  "$defs": {
+    "Artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "relative to the folder of result.json",
+          "title": "Path",
+          "type": "string"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "description": {
+          "description": "Ukrainian description for people",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "media_type",
+        "description"
+      ],
+      "title": "Artifact",
+      "type": "object"
+    },
+    "Correlation": {
+      "additionalProperties": false,
+      "properties": {
+        "rho": {
+          "title": "Rho",
+          "type": "number"
+        },
+        "p_value": {
+          "title": "P Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "rho",
+        "p_value"
+      ],
+      "title": "Correlation",
+      "type": "object"
+    },
+    "DataSource": {
+      "additionalProperties": false,
+      "properties": {
+        "collection": {
+          "title": "Collection",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "resolution_m": {
+          "title": "Resolution M",
+          "type": "number"
+        },
+        "items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "collection",
+        "title",
+        "provider",
+        "resolution_m"
+      ],
+      "title": "DataSource",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "description": "One human-readable conclusion produced by a fixed rule (never free-form reasoning).",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "info",
+            "notice",
+            "warning"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "text": {
+          "description": "Ukrainian sentence for people",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "level",
+        "text"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "Label": {
+      "additionalProperties": false,
+      "description": "A short value shown to people: the same meaning in English and Ukrainian.",
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "uk": {
+          "title": "Uk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "en",
+        "uk"
+      ],
+      "title": "Label",
+      "type": "object"
+    },
+    "Message": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "text"
+      ],
+      "title": "Message",
+      "type": "object"
+    },
+    "NdviWetness": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "requested",
+            "vegetation_peak",
+            "vegetation_max_spread"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "scene_id": {
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "pixels": {
+          "title": "Pixels",
+          "type": "integer"
+        },
+        "vs_twi": {
+          "$ref": "#/$defs/Correlation"
+        },
+        "mean_by_wetness_third": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "NDVI mean in the driest, middle and wettest third",
+          "title": "Mean By Wetness Third",
+          "type": "object"
+        }
+      },
+      "required": [
+        "date",
+        "reason",
+        "scene_id",
+        "pixels",
+        "vs_twi",
+        "mean_by_wetness_third"
+      ],
+      "title": "NdviWetness",
+      "type": "object"
+    },
+    "Offset": {
+      "additionalProperties": false,
+      "properties": {
+        "north_m": {
+          "title": "North M",
+          "type": "number"
+        },
+        "east_m": {
+          "title": "East M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "north_m",
+        "east_m"
+      ],
+      "title": "Offset",
+      "type": "object"
+    },
+    "OpenWater": {
+      "additionalProperties": false,
+      "properties": {
+        "years": {
+          "default": "1984–2020",
+          "title": "Years",
+          "type": "string"
+        },
+        "share_ever": {
+          "description": "share of the area where open water was seen at least once",
+          "title": "Share Ever",
+          "type": "number"
+        },
+        "share_frequent": {
+          "description": "share where water was seen in >= 25 % of the observed months",
+          "title": "Share Frequent",
+          "type": "number"
+        },
+        "max_occurrence_pct": {
+          "title": "Max Occurrence Pct",
+          "type": "integer"
+        },
+        "max_months_per_year": {
+          "title": "Max Months Per Year",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "share_ever",
+        "share_frequent",
+        "max_occurrence_pct",
+        "max_months_per_year"
+      ],
+      "title": "OpenWater",
+      "type": "object"
+    },
+    "ParcelInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "from the request, or derived from the geometry",
+          "title": "Name",
+          "type": "string"
+        },
+        "parts": {
+          "description": "separate parts of the parcel (MultiPolygon)",
+          "title": "Parts",
+          "type": "integer"
+        },
+        "area_ha": {
+          "description": "area of the polygon",
+          "title": "Area Ha",
+          "type": "number"
+        },
+        "expected_area_ha": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "area the caller expected, from the request",
+          "title": "Expected Area Ha"
+        },
+        "bbox": {
+          "description": "min lng, min lat, max lng, max lat (EPSG:4326)",
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "centroid": {
+          "description": "lng, lat (EPSG:4326)",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Centroid",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "returned from the request as is",
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "parts",
+        "area_ha",
+        "expected_area_ha",
+        "bbox",
+        "centroid"
+      ],
+      "title": "ParcelInfo",
+      "type": "object"
+    },
+    "RunInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "finished_at": {
+          "format": "date-time",
+          "title": "Finished At",
+          "type": "string"
+        },
+        "duration_s": {
+          "title": "Duration S",
+          "type": "number"
+        },
+        "status": {
+          "$ref": "#/$defs/RunStatus"
+        },
+        "status_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "argo_geoai_version": {
+          "title": "Argo Geoai Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "started_at",
+        "finished_at",
+        "duration_s",
+        "status",
+        "status_label",
+        "argo_geoai_version"
+      ],
+      "title": "RunInfo",
+      "type": "object"
+    },
+    "RunStatus": {
+      "enum": [
+        "ok",
+        "partial",
+        "error"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    },
+    "ToolInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/Label"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "title"
+      ],
+      "title": "ToolInfo",
+      "type": "object"
+    },
+    "WaterMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "pixels": {
+          "title": "Pixels",
+          "type": "integer"
+        },
+        "area_ha": {
+          "title": "Area Ha",
+          "type": "number"
+        },
+        "flat": {
+          "description": "90 % of the parcel below 2 degrees: wetness is indicative",
+          "title": "Flat",
+          "type": "boolean"
+        },
+        "twi": {
+          "$ref": "#/$defs/Wetness"
+        },
+        "wetness_classes": {
+          "items": {
+            "$ref": "#/$defs/WetnessClassShare"
+          },
+          "title": "Wetness Classes",
+          "type": "array"
+        },
+        "wet_share": {
+          "description": "share with TWI >= 11",
+          "title": "Wet Share",
+          "type": "number"
+        },
+        "wet_part_offset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Offset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "from the parcel centre to the wet cells' centre"
+        },
+        "max_upslope_ha": {
+          "description": "largest area draining through a point of the parcel",
+          "title": "Max Upslope Ha",
+          "type": "number"
+        },
+        "flow_lines_share": {
+          "description": "share draining >= 10 ha (concentrated runoff)",
+          "title": "Flow Lines Share",
+          "type": "number"
+        },
+        "catchment_truncated_share": {
+          "title": "Catchment Truncated Share",
+          "type": "number"
+        },
+        "open_water_on_parcel": {
+          "$ref": "#/$defs/OpenWater"
+        },
+        "open_water_nearby": {
+          "$ref": "#/$defs/OpenWater"
+        },
+        "ndvi_relation": {
+          "items": {
+            "$ref": "#/$defs/NdviWetness"
+          },
+          "title": "Ndvi Relation",
+          "type": "array"
+        },
+        "ndvi_mixed_crops": {
+          "title": "Ndvi Mixed Crops",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "pixels",
+        "area_ha",
+        "flat",
+        "twi",
+        "wetness_classes",
+        "wet_share",
+        "wet_part_offset",
+        "max_upslope_ha",
+        "flow_lines_share",
+        "catchment_truncated_share",
+        "open_water_on_parcel",
+        "open_water_nearby",
+        "ndvi_relation",
+        "ndvi_mixed_crops"
+      ],
+      "title": "WaterMetrics",
+      "type": "object"
+    },
+    "WaterParams": {
+      "additionalProperties": false,
+      "properties": {
+        "ndvi_dates": {
+          "description": "dates to compare NDVI with wetness; by default peak and max-spread of the latest vegetation run",
+          "items": {
+            "format": "date",
+            "type": "string"
+          },
+          "title": "Ndvi Dates",
+          "type": "array"
+        },
+        "catchment_buffer_m": {
+          "default": 1500,
+          "description": "relief read around the parcel to route water coming from upslope",
+          "maximum": 5000,
+          "minimum": 300,
+          "title": "Catchment Buffer M",
+          "type": "number"
+        },
+        "nearby_water_m": {
+          "default": 200,
+          "description": "ring around the parcel checked for open water",
+          "maximum": 2000,
+          "minimum": 0,
+          "title": "Nearby Water M",
+          "type": "number"
+        }
+      },
+      "title": "WaterParams",
+      "type": "object"
+    },
+    "Wetness": {
+      "additionalProperties": false,
+      "properties": {
+        "mean": {
+          "title": "Mean",
+          "type": "number"
+        },
+        "median": {
+          "title": "Median",
+          "type": "number"
+        },
+        "p10": {
+          "title": "P10",
+          "type": "number"
+        },
+        "p90": {
+          "title": "P90",
+          "type": "number"
+        },
+        "max": {
+          "title": "Max",
+          "type": "number"
+        }
+      },
+      "required": [
+        "mean",
+        "median",
+        "p10",
+        "p90",
+        "max"
+      ],
+      "title": "Wetness",
+      "type": "object"
+    },
+    "WetnessClassShare": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label"
+        },
+        "min_twi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Min Twi"
+        },
+        "max_twi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Twi"
+        },
+        "share": {
+          "title": "Share",
+          "type": "number"
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "min_twi",
+        "max_twi",
+        "share"
+      ],
+      "title": "WetnessClassShare",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "3.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tool": {
+      "$ref": "#/$defs/ToolInfo"
+    },
+    "run": {
+      "$ref": "#/$defs/RunInfo"
+    },
+    "parcel": {
+      "$ref": "#/$defs/ParcelInfo"
+    },
+    "parameters": {
+      "$ref": "#/$defs/WaterParams"
+    },
+    "data_sources": {
+      "items": {
+        "$ref": "#/$defs/DataSource"
+      },
+      "title": "Data Sources",
+      "type": "array"
+    },
+    "summary": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Summary",
+      "type": "array"
+    },
+    "metrics": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WaterMetrics"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "tool",
+    "run",
+    "parcel",
+    "parameters"
+  ],
+  "title": "ToolResult[WaterMetrics, WaterParams]",
+  "type": "object"
+}

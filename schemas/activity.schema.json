@@ -1,0 +1,764 @@
+{
+  "$defs": {
+    "ActivityEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "harvest, tillage, sowing (tillage followed by emergence), emergence, green_cut, peak",
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label"
+        },
+        "date_from": {
+          "description": "the last observation before the change",
+          "format": "date",
+          "title": "Date From",
+          "type": "string"
+        },
+        "date_to": {
+          "description": "the first observation that shows the change",
+          "format": "date",
+          "title": "Date To",
+          "type": "string"
+        },
+        "share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "share of the field where it happened; None for a season peak",
+          "title": "Share"
+        },
+        "area_ha": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Area Ha"
+        },
+        "source": {
+          "description": "sentinel-1 (radar) or sentinel-2 (optical)",
+          "title": "Source",
+          "type": "string"
+        },
+        "text": {
+          "description": "Ukrainian explanation for people",
+          "title": "Text",
+          "type": "string"
+        },
+        "highlight_share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "share of the highlight (the land) where it happened; None without a highlight",
+          "title": "Highlight Share"
+        },
+        "highlight_area_ha": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Highlight Area Ha"
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "date_from",
+        "date_to",
+        "share",
+        "area_ha",
+        "source",
+        "text"
+      ],
+      "title": "ActivityEvent",
+      "type": "object"
+    },
+    "ActivityMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "period_start": {
+          "format": "date",
+          "title": "Period Start",
+          "type": "string"
+        },
+        "period_end": {
+          "format": "date",
+          "title": "Period End",
+          "type": "string"
+        },
+        "optical_scenes": {
+          "description": "Sentinel-2 days found",
+          "title": "Optical Scenes",
+          "type": "integer"
+        },
+        "optical_dates": {
+          "description": "clear enough to count",
+          "title": "Optical Dates",
+          "type": "integer"
+        },
+        "radar_acquisitions": {
+          "title": "Radar Acquisitions",
+          "type": "integer"
+        },
+        "events": {
+          "description": "in time order",
+          "items": {
+            "$ref": "#/$defs/ActivityEvent"
+          },
+          "title": "Events",
+          "type": "array"
+        },
+        "counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "description": "events per code",
+          "title": "Counts",
+          "type": "object"
+        },
+        "timeline": {
+          "description": "date | activity table, oldest first: events (on the first date they are seen) and the state of the field on every clear image",
+          "items": {
+            "$ref": "#/$defs/TimelineEntry"
+          },
+          "title": "Timeline",
+          "type": "array"
+        },
+        "history": {
+          "items": {
+            "$ref": "#/$defs/OpticalDate"
+          },
+          "title": "History",
+          "type": "array"
+        }
+      },
+      "required": [
+        "period_start",
+        "period_end",
+        "optical_scenes",
+        "optical_dates",
+        "radar_acquisitions",
+        "events",
+        "counts",
+        "timeline",
+        "history"
+      ],
+      "title": "ActivityMetrics",
+      "type": "object"
+    },
+    "ActivityParams": {
+      "additionalProperties": false,
+      "properties": {
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "first day of the period (the caller decides how far back to look); months when empty",
+          "title": "Start Date"
+        },
+        "months": {
+          "default": 24,
+          "description": "period length counted back from end_date, without start_date",
+          "maximum": 120,
+          "minimum": 1,
+          "title": "Months",
+          "type": "integer"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "last day of the period; today by default",
+          "title": "End Date"
+        },
+        "max_scene_cloud": {
+          "default": 90,
+          "description": "skip Sentinel-2 scenes cloudier than this, %; the parcel's own cloud mask decides then",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Max Scene Cloud",
+          "type": "number"
+        },
+        "min_clear_share": {
+          "default": 0.6,
+          "description": "a Sentinel-2 date counts when at least this share of the parcel is clear",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Clear Share",
+          "type": "number"
+        },
+        "radar": {
+          "default": true,
+          "description": "read Sentinel-1 radar (harvest dates); False: optical only, faster",
+          "title": "Radar",
+          "type": "boolean"
+        },
+        "highlight_tolerance": {
+          "default": 0.05,
+          "description": "the highlight (a land inside the analysed area) counts as touched by an event when at least this share of it changed; less is the error of the method (the caller decides)",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Highlight Tolerance",
+          "type": "number"
+        }
+      },
+      "title": "ActivityParams",
+      "type": "object"
+    },
+    "Artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "relative to the folder of result.json",
+          "title": "Path",
+          "type": "string"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "description": {
+          "description": "Ukrainian description for people",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "media_type",
+        "description"
+      ],
+      "title": "Artifact",
+      "type": "object"
+    },
+    "DataSource": {
+      "additionalProperties": false,
+      "properties": {
+        "collection": {
+          "title": "Collection",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "resolution_m": {
+          "title": "Resolution M",
+          "type": "number"
+        },
+        "items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "collection",
+        "title",
+        "provider",
+        "resolution_m"
+      ],
+      "title": "DataSource",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "description": "One human-readable conclusion produced by a fixed rule (never free-form reasoning).",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "info",
+            "notice",
+            "warning"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "text": {
+          "description": "Ukrainian sentence for people",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "level",
+        "text"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "Label": {
+      "additionalProperties": false,
+      "description": "A short value shown to people: the same meaning in English and Ukrainian.",
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "uk": {
+          "title": "Uk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "en",
+        "uk"
+      ],
+      "title": "Label",
+      "type": "object"
+    },
+    "Message": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "text"
+      ],
+      "title": "Message",
+      "type": "object"
+    },
+    "OpticalDate": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "scene_id": {
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "clear_share": {
+          "title": "Clear Share",
+          "type": "number"
+        },
+        "snow_share": {
+          "title": "Snow Share",
+          "type": "number"
+        },
+        "counted": {
+          "title": "Counted",
+          "type": "boolean"
+        },
+        "ndvi_median": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ndvi Median"
+        },
+        "ndti_median": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ndti Median"
+        },
+        "highlight_clear_share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "share of the highlight seen clearly",
+          "title": "Highlight Clear Share"
+        },
+        "highlight_ndvi_median": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Highlight Ndvi Median"
+        },
+        "highlight_ndti_median": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Highlight Ndti Median"
+        }
+      },
+      "required": [
+        "date",
+        "scene_id",
+        "clear_share",
+        "snow_share",
+        "counted"
+      ],
+      "title": "OpticalDate",
+      "type": "object"
+    },
+    "ParcelInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "from the request, or derived from the geometry",
+          "title": "Name",
+          "type": "string"
+        },
+        "parts": {
+          "description": "separate parts of the parcel (MultiPolygon)",
+          "title": "Parts",
+          "type": "integer"
+        },
+        "area_ha": {
+          "description": "area of the polygon",
+          "title": "Area Ha",
+          "type": "number"
+        },
+        "expected_area_ha": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "area the caller expected, from the request",
+          "title": "Expected Area Ha"
+        },
+        "bbox": {
+          "description": "min lng, min lat, max lng, max lat (EPSG:4326)",
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "centroid": {
+          "description": "lng, lat (EPSG:4326)",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Centroid",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "returned from the request as is",
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "parts",
+        "area_ha",
+        "expected_area_ha",
+        "bbox",
+        "centroid"
+      ],
+      "title": "ParcelInfo",
+      "type": "object"
+    },
+    "RunInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "finished_at": {
+          "format": "date-time",
+          "title": "Finished At",
+          "type": "string"
+        },
+        "duration_s": {
+          "title": "Duration S",
+          "type": "number"
+        },
+        "status": {
+          "$ref": "#/$defs/RunStatus"
+        },
+        "status_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "argo_geoai_version": {
+          "title": "Argo Geoai Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "started_at",
+        "finished_at",
+        "duration_s",
+        "status",
+        "status_label",
+        "argo_geoai_version"
+      ],
+      "title": "RunInfo",
+      "type": "object"
+    },
+    "RunStatus": {
+      "enum": [
+        "ok",
+        "partial",
+        "error"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    },
+    "TimelineEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "kind": {
+          "description": "event: something was done or happened; observation: what a clear image shows",
+          "enum": [
+            "event",
+            "observation"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "code": {
+          "description": "event code, or the ground state of an observation",
+          "title": "Code",
+          "type": "string"
+        },
+        "text": {
+          "description": "Ukrainian sentence for people: the activity column of the table",
+          "title": "Text",
+          "type": "string"
+        },
+        "highlight_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "what happened on the highlight (the land): the land column; None without a highlight",
+          "title": "Highlight Text"
+        },
+        "highlight_touched": {
+          "default": false,
+          "description": "the event changed at least highlight_tolerance of the highlight",
+          "title": "Highlight Touched",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "date",
+        "kind",
+        "code",
+        "text"
+      ],
+      "title": "TimelineEntry",
+      "type": "object"
+    },
+    "ToolInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/Label"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "title"
+      ],
+      "title": "ToolInfo",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "3.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tool": {
+      "$ref": "#/$defs/ToolInfo"
+    },
+    "run": {
+      "$ref": "#/$defs/RunInfo"
+    },
+    "parcel": {
+      "$ref": "#/$defs/ParcelInfo"
+    },
+    "parameters": {
+      "$ref": "#/$defs/ActivityParams"
+    },
+    "data_sources": {
+      "items": {
+        "$ref": "#/$defs/DataSource"
+      },
+      "title": "Data Sources",
+      "type": "array"
+    },
+    "summary": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Summary",
+      "type": "array"
+    },
+    "metrics": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ActivityMetrics"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "tool",
+    "run",
+    "parcel",
+    "parameters"
+  ],
+  "title": "ToolResult[ActivityMetrics, ActivityParams]",
+  "type": "object"
+}

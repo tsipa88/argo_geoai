@@ -1,0 +1,713 @@
+{
+  "$defs": {
+    "Artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "relative to the folder of result.json",
+          "title": "Path",
+          "type": "string"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "description": {
+          "description": "Ukrainian description for people",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "media_type",
+        "description"
+      ],
+      "title": "Artifact",
+      "type": "object"
+    },
+    "ClassNdvi": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label"
+        },
+        "ndvi_mean": {
+          "title": "Ndvi Mean",
+          "type": "number"
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "ndvi_mean"
+      ],
+      "title": "ClassNdvi",
+      "type": "object"
+    },
+    "ClassShare": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label"
+        },
+        "share": {
+          "title": "Share",
+          "type": "number"
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "share"
+      ],
+      "title": "ClassShare",
+      "type": "object"
+    },
+    "Correlation": {
+      "additionalProperties": false,
+      "properties": {
+        "rho": {
+          "title": "Rho",
+          "type": "number"
+        },
+        "p_value": {
+          "title": "P Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "rho",
+        "p_value"
+      ],
+      "title": "Correlation",
+      "type": "object"
+    },
+    "DataSource": {
+      "additionalProperties": false,
+      "properties": {
+        "collection": {
+          "title": "Collection",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "resolution_m": {
+          "title": "Resolution M",
+          "type": "number"
+        },
+        "items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "collection",
+        "title",
+        "provider",
+        "resolution_m"
+      ],
+      "title": "DataSource",
+      "type": "object"
+    },
+    "Elevation": {
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "title": "Min",
+          "type": "number"
+        },
+        "max": {
+          "title": "Max",
+          "type": "number"
+        },
+        "mean": {
+          "title": "Mean",
+          "type": "number"
+        },
+        "p5": {
+          "title": "P5",
+          "type": "number"
+        },
+        "p95": {
+          "title": "P95",
+          "type": "number"
+        },
+        "range": {
+          "title": "Range",
+          "type": "number"
+        },
+        "range_p5_p95": {
+          "title": "Range P5 P95",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min",
+        "max",
+        "mean",
+        "p5",
+        "p95",
+        "range",
+        "range_p5_p95"
+      ],
+      "title": "Elevation",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "description": "One human-readable conclusion produced by a fixed rule (never free-form reasoning).",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "info",
+            "notice",
+            "warning"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "text": {
+          "description": "Ukrainian sentence for people",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "level",
+        "text"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "Label": {
+      "additionalProperties": false,
+      "description": "A short value shown to people: the same meaning in English and Ukrainian.",
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "uk": {
+          "title": "Uk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "en",
+        "uk"
+      ],
+      "title": "Label",
+      "type": "object"
+    },
+    "Message": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "text"
+      ],
+      "title": "Message",
+      "type": "object"
+    },
+    "NdviRelation": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "requested",
+            "vegetation_peak",
+            "vegetation_max_spread"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "scene_id": {
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "pixels": {
+          "title": "Pixels",
+          "type": "integer"
+        },
+        "vs_elevation": {
+          "$ref": "#/$defs/Correlation"
+        },
+        "vs_slope": {
+          "$ref": "#/$defs/Correlation"
+        },
+        "mean_by_elevation_third": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "propertyNames": {
+            "enum": [
+              "low",
+              "middle",
+              "high"
+            ]
+          },
+          "title": "Mean By Elevation Third",
+          "type": "object"
+        },
+        "mean_by_slope_class": {
+          "items": {
+            "$ref": "#/$defs/ClassNdvi"
+          },
+          "title": "Mean By Slope Class",
+          "type": "array"
+        }
+      },
+      "required": [
+        "date",
+        "reason",
+        "scene_id",
+        "pixels",
+        "vs_elevation",
+        "vs_slope",
+        "mean_by_elevation_third",
+        "mean_by_slope_class"
+      ],
+      "title": "NdviRelation",
+      "type": "object"
+    },
+    "Offset": {
+      "additionalProperties": false,
+      "properties": {
+        "north_m": {
+          "title": "North M",
+          "type": "number"
+        },
+        "east_m": {
+          "title": "East M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "north_m",
+        "east_m"
+      ],
+      "title": "Offset",
+      "type": "object"
+    },
+    "ParcelInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "from the request, or derived from the geometry",
+          "title": "Name",
+          "type": "string"
+        },
+        "parts": {
+          "description": "separate parts of the parcel (MultiPolygon)",
+          "title": "Parts",
+          "type": "integer"
+        },
+        "area_ha": {
+          "description": "area of the polygon",
+          "title": "Area Ha",
+          "type": "number"
+        },
+        "expected_area_ha": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "area the caller expected, from the request",
+          "title": "Expected Area Ha"
+        },
+        "bbox": {
+          "description": "min lng, min lat, max lng, max lat (EPSG:4326)",
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "centroid": {
+          "description": "lng, lat (EPSG:4326)",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Centroid",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "returned from the request as is",
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "parts",
+        "area_ha",
+        "expected_area_ha",
+        "bbox",
+        "centroid"
+      ],
+      "title": "ParcelInfo",
+      "type": "object"
+    },
+    "ReliefMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "pixels": {
+          "title": "Pixels",
+          "type": "integer"
+        },
+        "area_ha": {
+          "title": "Area Ha",
+          "type": "number"
+        },
+        "elevation_m": {
+          "$ref": "#/$defs/Elevation"
+        },
+        "slope_deg": {
+          "$ref": "#/$defs/Slope"
+        },
+        "slope_classes": {
+          "items": {
+            "$ref": "#/$defs/SlopeClassShare"
+          },
+          "title": "Slope Classes",
+          "type": "array"
+        },
+        "aspect_of_slopes": {
+          "description": "slopes of 1° and more",
+          "items": {
+            "$ref": "#/$defs/ClassShare"
+          },
+          "title": "Aspect Of Slopes",
+          "type": "array"
+        },
+        "low_third_offset_from_high_third": {
+          "$ref": "#/$defs/Offset"
+        },
+        "ndvi_relation": {
+          "items": {
+            "$ref": "#/$defs/NdviRelation"
+          },
+          "title": "Ndvi Relation",
+          "type": "array"
+        },
+        "ndvi_mixed_crops": {
+          "default": false,
+          "description": "vegetation found zones of different crops: NDVI vs relief would compare crops",
+          "title": "Ndvi Mixed Crops",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "pixels",
+        "area_ha",
+        "elevation_m",
+        "slope_deg",
+        "slope_classes",
+        "aspect_of_slopes",
+        "low_third_offset_from_high_third",
+        "ndvi_relation"
+      ],
+      "title": "ReliefMetrics",
+      "type": "object"
+    },
+    "ReliefParams": {
+      "additionalProperties": false,
+      "properties": {
+        "ndvi_dates": {
+          "description": "dates to compare NDVI with relief; by default peak and max-spread of the latest vegetation run",
+          "items": {
+            "format": "date",
+            "type": "string"
+          },
+          "title": "Ndvi Dates",
+          "type": "array"
+        },
+        "buffer_m": {
+          "default": 120,
+          "description": "margin read around the parcel so edge slopes are whole",
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Buffer M",
+          "type": "number"
+        }
+      },
+      "title": "ReliefParams",
+      "type": "object"
+    },
+    "RunInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "finished_at": {
+          "format": "date-time",
+          "title": "Finished At",
+          "type": "string"
+        },
+        "duration_s": {
+          "title": "Duration S",
+          "type": "number"
+        },
+        "status": {
+          "$ref": "#/$defs/RunStatus"
+        },
+        "status_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "argo_geoai_version": {
+          "title": "Argo Geoai Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "started_at",
+        "finished_at",
+        "duration_s",
+        "status",
+        "status_label",
+        "argo_geoai_version"
+      ],
+      "title": "RunInfo",
+      "type": "object"
+    },
+    "RunStatus": {
+      "enum": [
+        "ok",
+        "partial",
+        "error"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    },
+    "Slope": {
+      "additionalProperties": false,
+      "properties": {
+        "mean": {
+          "title": "Mean",
+          "type": "number"
+        },
+        "median": {
+          "title": "Median",
+          "type": "number"
+        },
+        "p90": {
+          "title": "P90",
+          "type": "number"
+        },
+        "max": {
+          "title": "Max",
+          "type": "number"
+        }
+      },
+      "required": [
+        "mean",
+        "median",
+        "p90",
+        "max"
+      ],
+      "title": "Slope",
+      "type": "object"
+    },
+    "SlopeClassShare": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label"
+        },
+        "share": {
+          "title": "Share",
+          "type": "number"
+        },
+        "min_deg": {
+          "title": "Min Deg",
+          "type": "number"
+        },
+        "max_deg": {
+          "title": "Max Deg",
+          "type": "number"
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "share",
+        "min_deg",
+        "max_deg"
+      ],
+      "title": "SlopeClassShare",
+      "type": "object"
+    },
+    "ToolInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/Label"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "title"
+      ],
+      "title": "ToolInfo",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "3.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tool": {
+      "$ref": "#/$defs/ToolInfo"
+    },
+    "run": {
+      "$ref": "#/$defs/RunInfo"
+    },
+    "parcel": {
+      "$ref": "#/$defs/ParcelInfo"
+    },
+    "parameters": {
+      "$ref": "#/$defs/ReliefParams"
+    },
+    "data_sources": {
+      "items": {
+        "$ref": "#/$defs/DataSource"
+      },
+      "title": "Data Sources",
+      "type": "array"
+    },
+    "summary": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Summary",
+      "type": "array"
+    },
+    "metrics": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReliefMetrics"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "tool",
+    "run",
+    "parcel",
+    "parameters"
+  ],
+  "title": "ToolResult[ReliefMetrics, ReliefParams]",
+  "type": "object"
+}

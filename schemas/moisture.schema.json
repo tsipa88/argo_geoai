@@ -1,0 +1,800 @@
+{
+  "$defs": {
+    "Artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "relative to the folder of result.json",
+          "title": "Path",
+          "type": "string"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "description": {
+          "description": "Ukrainian description for people",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "media_type",
+        "description"
+      ],
+      "title": "Artifact",
+      "type": "object"
+    },
+    "DataSource": {
+      "additionalProperties": false,
+      "properties": {
+        "collection": {
+          "title": "Collection",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "resolution_m": {
+          "title": "Resolution M",
+          "type": "number"
+        },
+        "items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "collection",
+        "title",
+        "provider",
+        "resolution_m"
+      ],
+      "title": "DataSource",
+      "type": "object"
+    },
+    "DryZone": {
+      "additionalProperties": false,
+      "properties": {
+        "share": {
+          "description": "share of the green field drier than its NDVI explains on most dates",
+          "title": "Share",
+          "type": "number"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Offset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "from the field centre to the dry part's centre"
+        },
+        "dates_used": {
+          "title": "Dates Used",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "share",
+        "offset",
+        "dates_used"
+      ],
+      "title": "DryZone",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "description": "One human-readable conclusion produced by a fixed rule (never free-form reasoning).",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "info",
+            "notice",
+            "warning"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "text": {
+          "description": "Ukrainian sentence for people",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "level",
+        "text"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "Label": {
+      "additionalProperties": false,
+      "description": "A short value shown to people: the same meaning in English and Ukrainian.",
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "uk": {
+          "title": "Uk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "en",
+        "uk"
+      ],
+      "title": "Label",
+      "type": "object"
+    },
+    "Message": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "text"
+      ],
+      "title": "Message",
+      "type": "object"
+    },
+    "MoistureDate": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "scene_id": {
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "scene_cloud_cover": {
+          "title": "Scene Cloud Cover",
+          "type": "number"
+        },
+        "clear_share": {
+          "title": "Clear Share",
+          "type": "number"
+        },
+        "counted": {
+          "description": "clear enough to count",
+          "title": "Counted",
+          "type": "boolean"
+        },
+        "vegetated_share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "share of the clear area with NDVI >= 0.4",
+          "title": "Vegetated Share"
+        },
+        "dense_share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "share of the clear area with NDVI >= 0.7",
+          "title": "Dense Share"
+        },
+        "ndvi_mean": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ndvi Mean"
+        },
+        "ndmi": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NdmiStats"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NDMI of the green pixels"
+        },
+        "phase": {
+          "anyOf": [
+            {
+              "enum": [
+                "bare",
+                "sparse",
+                "growing",
+                "ripening"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "bare: too little green; sparse: canopy not dense yet; ripening: after the NDVI peak",
+          "title": "Phase"
+        },
+        "stress": {
+          "description": "only for growing dates",
+          "items": {
+            "$ref": "#/$defs/StressShare"
+          },
+          "title": "Stress",
+          "type": "array"
+        },
+        "stressed_share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "strong + moderate stress, share of the dense canopy",
+          "title": "Stressed Share"
+        },
+        "developing_share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "share of the dense canopy left out: before its own NDVI peak, canopy still closing",
+          "title": "Developing Share"
+        },
+        "ripening_share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "share of the dense canopy left out: past its own NDVI peak (ripening crop)",
+          "title": "Ripening Share"
+        }
+      },
+      "required": [
+        "date",
+        "scene_id",
+        "scene_cloud_cover",
+        "clear_share",
+        "counted"
+      ],
+      "title": "MoistureDate",
+      "type": "object"
+    },
+    "MoistureMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "period_start": {
+          "format": "date",
+          "title": "Period Start",
+          "type": "string"
+        },
+        "period_end": {
+          "format": "date",
+          "title": "Period End",
+          "type": "string"
+        },
+        "scenes_found": {
+          "title": "Scenes Found",
+          "type": "integer"
+        },
+        "dates_total": {
+          "title": "Dates Total",
+          "type": "integer"
+        },
+        "dates_counted": {
+          "title": "Dates Counted",
+          "type": "integer"
+        },
+        "dates_assessed": {
+          "description": "growing dates: dense canopy and not ripening",
+          "title": "Dates Assessed",
+          "type": "integer"
+        },
+        "ndvi_peak": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ndvi Peak"
+        },
+        "worst": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MoistureDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "assessed date with the most water stress"
+        },
+        "latest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MoistureDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "the latest assessed date"
+        },
+        "dry_zone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DryZone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mixed_crops": {
+          "description": "vegetation found several crops: a drier part may be another crop, not a lack of water",
+          "title": "Mixed Crops",
+          "type": "boolean"
+        },
+        "history": {
+          "items": {
+            "$ref": "#/$defs/MoistureDate"
+          },
+          "title": "History",
+          "type": "array"
+        }
+      },
+      "required": [
+        "period_start",
+        "period_end",
+        "scenes_found",
+        "dates_total",
+        "dates_counted",
+        "dates_assessed",
+        "ndvi_peak",
+        "worst",
+        "latest",
+        "dry_zone",
+        "mixed_crops",
+        "history"
+      ],
+      "title": "MoistureMetrics",
+      "type": "object"
+    },
+    "MoistureParams": {
+      "additionalProperties": false,
+      "properties": {
+        "months": {
+          "default": 6,
+          "description": "period length, counted back from end_date",
+          "maximum": 36,
+          "minimum": 1,
+          "title": "Months",
+          "type": "integer"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "last day of the period; today by default",
+          "title": "End Date"
+        },
+        "max_scene_cloud": {
+          "default": 20,
+          "description": "skip scenes cloudier than this, %",
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Max Scene Cloud",
+          "type": "number"
+        },
+        "min_clear_share": {
+          "default": 0.8,
+          "description": "a date counts when at least this share of the parcel is cloud-free",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Min Clear Share",
+          "type": "number"
+        }
+      },
+      "title": "MoistureParams",
+      "type": "object"
+    },
+    "NdmiStats": {
+      "additionalProperties": false,
+      "properties": {
+        "mean": {
+          "title": "Mean",
+          "type": "number"
+        },
+        "median": {
+          "title": "Median",
+          "type": "number"
+        },
+        "p10": {
+          "title": "P10",
+          "type": "number"
+        },
+        "p90": {
+          "title": "P90",
+          "type": "number"
+        }
+      },
+      "required": [
+        "mean",
+        "median",
+        "p10",
+        "p90"
+      ],
+      "title": "NdmiStats",
+      "type": "object"
+    },
+    "Offset": {
+      "additionalProperties": false,
+      "properties": {
+        "north_m": {
+          "title": "North M",
+          "type": "number"
+        },
+        "east_m": {
+          "title": "East M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "north_m",
+        "east_m"
+      ],
+      "title": "Offset",
+      "type": "object"
+    },
+    "ParcelInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "from the request, or derived from the geometry",
+          "title": "Name",
+          "type": "string"
+        },
+        "parts": {
+          "description": "separate parts of the parcel (MultiPolygon)",
+          "title": "Parts",
+          "type": "integer"
+        },
+        "area_ha": {
+          "description": "area of the polygon",
+          "title": "Area Ha",
+          "type": "number"
+        },
+        "expected_area_ha": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "area the caller expected, from the request",
+          "title": "Expected Area Ha"
+        },
+        "bbox": {
+          "description": "min lng, min lat, max lng, max lat (EPSG:4326)",
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "centroid": {
+          "description": "lng, lat (EPSG:4326)",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Centroid",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "returned from the request as is",
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "parts",
+        "area_ha",
+        "expected_area_ha",
+        "bbox",
+        "centroid"
+      ],
+      "title": "ParcelInfo",
+      "type": "object"
+    },
+    "RunInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "finished_at": {
+          "format": "date-time",
+          "title": "Finished At",
+          "type": "string"
+        },
+        "duration_s": {
+          "title": "Duration S",
+          "type": "number"
+        },
+        "status": {
+          "$ref": "#/$defs/RunStatus"
+        },
+        "status_label": {
+          "$ref": "#/$defs/Label"
+        },
+        "argo_geoai_version": {
+          "title": "Argo Geoai Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "started_at",
+        "finished_at",
+        "duration_s",
+        "status",
+        "status_label",
+        "argo_geoai_version"
+      ],
+      "title": "RunInfo",
+      "type": "object"
+    },
+    "RunStatus": {
+      "enum": [
+        "ok",
+        "partial",
+        "error"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    },
+    "StressShare": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label"
+        },
+        "min_ndmi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Min Ndmi"
+        },
+        "max_ndmi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Ndmi"
+        },
+        "share": {
+          "description": "share of the dense canopy (NDVI >= 0.7) of the date",
+          "title": "Share",
+          "type": "number"
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "min_ndmi",
+        "max_ndmi",
+        "share"
+      ],
+      "title": "StressShare",
+      "type": "object"
+    },
+    "ToolInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/Label"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "title"
+      ],
+      "title": "ToolInfo",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "3.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tool": {
+      "$ref": "#/$defs/ToolInfo"
+    },
+    "run": {
+      "$ref": "#/$defs/RunInfo"
+    },
+    "parcel": {
+      "$ref": "#/$defs/ParcelInfo"
+    },
+    "parameters": {
+      "$ref": "#/$defs/MoistureParams"
+    },
+    "data_sources": {
+      "items": {
+        "$ref": "#/$defs/DataSource"
+      },
+      "title": "Data Sources",
+      "type": "array"
+    },
+    "summary": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Summary",
+      "type": "array"
+    },
+    "metrics": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MoistureMetrics"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "$ref": "#/$defs/Message"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "tool",
+    "run",
+    "parcel",
+    "parameters"
+  ],
+  "title": "ToolResult[MoistureMetrics, MoistureParams]",
+  "type": "object"
+}
